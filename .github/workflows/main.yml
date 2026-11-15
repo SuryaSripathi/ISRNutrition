@@ -1,0 +1,27 @@
+name: Daily UIUC ISR Vegetarian Micronutrient SMS Digest
+
+on:
+  schedule:
+    # 14:00 UTC = 8:00 AM Central Standard Time (America/Chicago)
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+
+jobs:
+  send-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Fetch ISR Menu & Send SMS Digest
+        env:
+          TEXTBELT_API_KEY: ${{ secrets.TEXTBELT_API_KEY }}
+          SMTP_EMAIL: ${{ secrets.SMTP_EMAIL }}
+          SMTP_APP_PASSWORD: ${{ secrets.SMTP_APP_PASSWORD }}
+          SMS_RECIPIENTS: ${{ secrets.SMS_RECIPIENTS }}
+        run: python3 isr_nutrition.py
